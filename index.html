@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pastane Menü — Sekmeli Şablon</title>
+  <style>
+    :root{
+      --page-bg: #f3f4f6;
+      --card-bg: #fffaf8;
+      --muted: #66676b;
+      --accent: #b36b5b;
+      --accent-2: #8aa6a3;
+      --shadow: 0 8px 20px rgba(15,18,20,0.06);
+      --glass: rgba(255,255,255,0.6);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0; background:linear-gradient(180deg,var(--page-bg) 0%, #eef0f1 100%);
+      color:#111; -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    header{
+      padding:18px 16px;
+      border-bottom:1px solid rgba(24,24,24,0.04);
+      text-align:center;
+      position:relative;
+      background:var(--glass);
+      backdrop-filter: blur(6px);
+      z-index:10;
+    }
+    h1{margin:0;font-size:1.25rem;font-weight:700;color:#2b2b2b}
+
+    /* fotoğraf eklendi */
+    .header-img {
+      display: block;
+      margin: 10px auto 0;
+      width: 100%;
+      max-width: 600px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 10px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    }
+
+    @media (max-width: 480px) {
+      .header-img {
+        max-width: 100%;
+        height: 100px;
+        border-radius: 8px;
+      }
+    }
+
+    .container{max-width:980px;margin:14px auto;padding:0 14px;}
+    .tabs{
+      display:flex; gap:10px; overflow:auto; padding:10px; margin:14px 0;
+      -webkit-overflow-scrolling:touch;
+    }
+    .tab{
+      flex:0 0 auto; padding:10px 14px; border-radius:999px;
+      background:linear-gradient(180deg,#ffffff,#fff7f2);
+      cursor:pointer; font-weight:700; color:var(--muted);
+      border:1px solid rgba(0,0,0,0.03);
+      box-shadow:0 2px 6px rgba(15,18,20,0.03);
+      transition:transform .12s ease, box-shadow .12s ease;
+      white-space:nowrap; font-size:0.95rem;
+    }
+    .tab:active{transform:translateY(1px);}
+    .tab[aria-selected="true"]{
+      background:linear-gradient(90deg,rgba(179,107,91,0.95),rgba(138,166,163,0.95));
+      color:white; box-shadow:0 8px 20px rgba(16,19,20,0.12);
+    }
+
+    .panel{display:none;animation:fade .18s ease}
+    .panel[aria-hidden="false"]{display:block}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none}}
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:14px;
+    }
+    .card{
+      background:var(--card-bg); border-radius:14px; padding:12px;
+      display:flex; gap:12px; align-items:center;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(18,18,18,0.03);
+      transition:transform .12s ease, box-shadow .12s ease;
+      min-height:92px;
+    }
+    .card:hover{transform:translateY(-4px); box-shadow:0 14px 30px rgba(18,18,20,0.08);}
+    .thumb{
+      width:86px;height:86px;border-radius:12px;object-fit:cover;flex-shrink:0;
+      background:linear-gradient(180deg,#f6f6f8,#efecec);
+    }
+    .img-fallback{
+      width:86px;height:86px;border-radius:12px;display:none;align-items:center;justify-content:center;
+      background:linear-gradient(180deg,#fff 0%,#f7f5f4 100%);
+      color:var(--muted);font-weight:700;font-size:0.9rem;border:1px dashed rgba(50,50,60,0.06);
+      flex-shrink:0;
+    }
+    .info{flex:1}
+    .name{font-weight:800;display:block;color:#232323;font-size:1rem}
+    .desc{font-size:0.92rem;color:var(--muted);margin-top:6px;line-height:1.2}
+    .meta-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .price{font-weight:900;color:var(--accent);font-size:1rem}
+
+    .panel-header{display:flex;gap:12px;align-items:center;margin-bottom:10px;justify-content:space-between;flex-wrap:wrap}
+    .search{flex:1;max-width:420px;display:flex;gap:8px;align-items:center;}
+    .search input{
+      width:100%;padding:10px 12px;border-radius:10px;border:1px solid rgba(0,0,0,0.06);
+      background:white;font-size:0.95rem;box-shadow:0 2px 8px rgba(15,18,20,0.03);
+    }
+
+    @media (max-width:760px){
+      .thumb{width:76px;height:76px}
+      .img-fallback{width:76px;height:76px}
+      .grid{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}
+      .tab{padding:10px 12px;font-size:0.92rem}
+      header{padding:14px 12px}
+    }
+
+    footer{
+      padding:14px;text-align:center;color:var(--muted);
+      font-size:0.85rem;border-top:1px solid rgba(0,0,0,0.03);margin-top:20px
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>pastane harun</h1>
+    <img src="images/totoro.jpg" alt="Pastane Harun" class="header-img">
+  </header>
+
+  <div class="container">
+    <div class="tabs" role="tablist" aria-label="Menü kategorileri" id="tabs">
+      <button class="tab" role="tab" aria-selected="true" aria-controls="panel-tatlilar" id="tab-tatlilar">Tatlılar</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-tuzlular" id="tab-tuzlular">Tuzlular</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-sicak" id="tab-sicak">Sıcak İçecekler</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-soguk" id="tab-soguk">Soğuk İçecekler</button>
+      <button class="tab" role="tab" aria-selected="false" aria-controls="panel-borek" id="tab-borek">Börekler</button>
+    </div>
+
+    <!-- Tatlılar -->
+    <section id="panel-tatlilar" class="panel" role="tabpanel" aria-hidden="false" aria-labelledby="tab-tatlilar">
+      <div class="panel-header">
+        <h2>Tatlılar</h2>
+        <div class="search"><input id="search-tatlilar" placeholder="Ürün ara" disabled></div>
+      </div>
+      <div class="grid" id="grid-tatlilar"></div>
+    </section>
+
+    <!-- Tuzlular -->
+    <section id="panel-tuzlular" class="panel" role="tabpanel" aria-hidden="true" aria-labelledby="tab-tuzlular">
+      <div class="panel-header">
+        <h2>Tuzlular</h2>
+        <div class="search"><input id="search-tuzlular" placeholder="Ürün ara" disabled></div>
+      </div>
+      <div class="grid" id="grid-tuzlular"></div>
+    </section>
+
+    <!-- Sıcak -->
+    <section id="panel-sicak" class="panel" role="tabpanel" aria-hidden="true" aria-labelledby="tab-sicak">
+      <div class="panel-header">
+        <h2>Sıcak İçecekler</h2>
+        <div class="search"><input id="search-sicak" placeholder="Ürün ara" disabled></div>
+      </div>
+      <div class="grid" id="grid-sicak"></div>
+    </section>
+
+    <!-- Soğuk -->
+    <section id="panel-soguk" class="panel" role="tabpanel" aria-hidden="true" aria-labelledby="tab-soguk">
+      <div class="panel-header">
+        <h2>Soğuk İçecekler</h2>
+        <div class="search"><input id="search-soguk" placeholder="Ürün ara" disabled></div>
+      </div>
+      <div class="grid" id="grid-soguk"></div>
+    </section>
+
+    <!-- Börek -->
+    <section id="panel-borek" class="panel" role="tabpanel" aria-hidden="true" aria-labelledby="tab-borek">
+      <div class="panel-header">
+        <h2>Börekler</h2>
+        <div class="search"><input id="search-borek" placeholder="Ürün ara" disabled></div>
+      </div>
+      <div class="grid" id="grid-borek"></div>
+    </section>
+
+    <footer>pastane harun · Bursa · +90 555 432 16 16 · 7/24</footer>
+  </div>
+
+  <script>
+    // Sekme kontrolü
+    (function(){
+      const tabs = Array.from(document.querySelectorAll('[role="tab"]'));
+      const panels = Array.from(document.querySelectorAll('[role="tabpanel"]'));
+      function activateTab(newTab){
+        tabs.forEach(t=>{
+          const selected=t===newTab;
+          t.setAttribute('aria-selected',selected);
+          const panel=document.getElementById(t.getAttribute('aria-controls'));
+          if(panel) panel.setAttribute('aria-hidden',!selected);
+        });
+        newTab.focus();
+      }
+      tabs.forEach(tab=>{
+        tab.addEventListener('click',()=>activateTab(tab));
+        tab.addEventListener('keydown',e=>{
+          const i=tabs.indexOf(tab);
+          if(e.key==='ArrowRight') activateTab(tabs[(i+1)%tabs.length]);
+          else if(e.key==='ArrowLeft') activateTab(tabs[(i-1+tabs.length)%tabs.length]);
+        });
+      });
+    })();
+
+    // Ürünler (her kategoride 10 farklı isim)
+    const products = {
+      tatlilar: ["Tiramisu","Baklava","Sütlaç","Profiterol","Cheesecake","Ekmek Kadayıfı","Krem Karamel","Magnolia","Brownie","Kazandibi"],
+      tuzlular: ["Poğaça","Açma","Kıymalı Börek","Peynirli Simit","Zeytinli Çörek","Mini Pizza","Kıymalı Gözleme","Kruvasan","Peynirli Poğaça","Sosisli Börek"],
+      sicak: ["Türk Kahvesi","Latte","Espresso","Cappuccino","Sıcak Çikolata","Adaçayı","Ihlamur","Filtre Kahve","Sütlü Kahve","Salep"],
+      soguk: ["Limonata","Soğuk Kahve","Buzlu Çay","Meyve Suyu","Ayran","Soda","Su","Milkshake","Soğuk Latte","Karpuz Suyu"],
+      borek: ["Peynirli Börek","Patatesli Börek","Kıymalı Börek","Ispanaklı Börek","Sade Börek","Su Böreği","Kaşarlı Börek","Sigara Böreği","Lor Peynirli Börek","Kavurmalı Börek"]
+    };
+
+    function createCard(name){
+      return `
+      <article class="card">
+        <img class="thumb" src="images/totoro.jpg" alt="${name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="img-fallback" aria-hidden="true">No Image</div>
+        <div class="info">
+          <div class="meta-row">
+            <span class="name">${name}</span>
+            <span class="price">₺40</span>
+          </div>
+          <div class="desc">${name} — pastane harun özel tarifi.</div>
+        </div>
+      </article>`;
+    }
+
+    for(const cat in products){
+      document.getElementById("grid-"+cat).innerHTML = products[cat].map(createCard).join("");
+    }
+  </script>
+</body>
+</html>
